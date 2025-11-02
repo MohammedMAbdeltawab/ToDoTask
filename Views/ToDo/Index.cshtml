@@ -2,30 +2,57 @@
 
 <h2>To-Do Tasks</h2>
 
-<form asp-action="AddToDo" method="post" style="margin-bottom: 10px;">
+<form asp-action="AddToDo" method="post" style="margin-bottom: 15px;">
     <input type="text" name="text" placeholder="Enter new task" required />
     <button type="submit">Add</button>
 </form>
 
-<ul style="list-style-type: none; padding: 0;">
-    @foreach (var item in Model)
-    {
-        <li style="margin-bottom: 6px;">
-            <form asp-action="ToggleCompletion" method="post" style="display: inline;">
-                <input type="hidden" name="id" value="@item.Id" />
-                <button type="submit">
-                    @Html.Raw(item.IsCompleted ? "&#9989;" : "&#10060;")
-                </button>
-            </form>
+@if (Model.Any())
+{
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th style="text-align: left; border-bottom: 1px solid #ccc; padding: 6px;">Status</th>
+                <th style="text-align: left; border-bottom: 1px solid #ccc; padding: 6px;">Task</th>
+                <th style="text-align: left; border-bottom: 1px solid #ccc; padding: 6px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td style="padding: 6px;">
+                        <form asp-action="ToggleCompletion" method="post" style="display: inline;">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" title="Toggle">
+                                @Html.Raw(item.IsCompleted ? "&#9989;" : "&#10060;")
+                            </button>
+                        </form>
+                    </td>
 
-            <span style="margin-left: 5px;">
-                @item.Text
-            </span>
+                    <td style="padding: 6px;">
+                        @if (item.IsCompleted)
+                        {
+                            <s>@item.Text</s>
+                        }
+                        else
+                        {
+                            @item.Text
+                        }
+                    </td>
 
-            <form asp-action="DeleteToDo" method="post" style="display: inline; margin-left: 8px;">
-                <input type="hidden" name="id" value="@item.Id" />
-                <button type="submit">Delete</button>
-            </form>
-        </li>
-    }
-</ul>
+                    <td style="padding: 6px;">
+                        <form asp-action="DeleteToDo" method="post" style="display: inline;">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No tasks yet. Add a new one above!</p>
+}
